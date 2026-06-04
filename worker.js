@@ -4,17 +4,15 @@ export default {
 
     if (url.pathname === '/ns') {
       const response = await env.ASSETS.fetch(request)
+      const newHeaders = new Headers(response.headers)
+      newHeaders.set('Content-Type', 'application/ld+json')
 
-      return new Response(response.body, {
+      return new Response(await response.text(), {
         status: response.status,
-        statusText: response.statusText,
-        headers: {
-          ...Object.fromEntries(response.headers),
-          'Content-Type': 'application/json',
-        },
+        headers: newHeaders,
       })
     }
 
-    return await env.ASSETS.fetch(request)
+    return env.ASSETS.fetch(request)
   },
 }
