@@ -1,7 +1,8 @@
 {
   "name": "telweb",
-  "compatibility_date": "2026-06-04",
+  "compatibility_date": "2024-04-01",
   "assets": {
     "directory": "./src"
-  }
+  },
+  "main": null
 }
