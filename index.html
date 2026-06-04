@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TelWeb</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>TelWeb</h1>
+    <nav>
+      <ul>
+        <li><a href="#whatisit">What is TelWeb?</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#whynotinsert">Why Not [Insert Name]?</a></li>
+        <li><a href="#howto">How to Use</a></li>
+        <li><a href="#dns">DNS Fallback</a></li>
+        <li><a href="#styleclarification">Style Clarification</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <section id="whatisit">
+      <h2>What is TelWeb?</h2>
+      <p>TelWeb resolves domain names into telephone numbers, webfingers (Fediverse), emails, and profile information.</p>
+    </section>
+    <section id="features">
+      <h2>Features</h2>
+      <ul>
+        <li>Made originally for phone numbers, but can be used for any contact information.</li>
+        <li>Supports mobile, landline, fax, tor, webfinger, email, and profile information.</li>
+        <li>Simple to implement.</li>
+        <li>DNS fallback for phone numbers only (different standard, click <a href="#dns">here for it</a>).</li>
+        <li>Open source and free to use.</li>
+        <li>You don't have to remember phone numbers or other weird formats anymore.</li>
+      </ul>
+    </section>
+    <section id="whynotinsert">
+      <h2>Why Not [Insert Name]?</h2>
+      <h3>Why Not DNS?</h3>
+      <p>We originally thought DNS would be sufficient, but it has limitations in length.</p>
+      <h3>Why Not DID?</h3>
+      <p>DID (including centralized ones like PLC) is cryptographic (you can lose your keys and identity) and is append-only. It's not suitable for private-ish information like phone numbers.</p>
+    </section>
+    <section id="howto">
+      <h2>How To</h2>
+      <h3>For Clients</h3>
+      <p>To resolve a domain name, simply send a request to <code>https://[domain]/.well-known/telweb</code>. The response will be a JSON-LD object of <a href="ns">this type</a> containing the resolved information.</p>
+      <h3>For Servers</h3>
+      <p>To implement a TelWeb server, create an endpoint at <code>/.well-known/telweb</code> that returns a JSON-LD object of <a href="ns">this type</a> containing the relevant information for the domain.</p>
+      <p>Make sure to implement a good interface for the user to set their contact information.</p>
+    </section>
+    <section id="dns">
+      <h2>DNS Fallback</h2>
+      <p>For phone numbers only, if the TelWeb endpoint is not available, clients can fallback to DNS by querying for a TXT record at <code>_telweb.[domain]</code>. The response should be in the format <code>tel:[number]</code>.</p>
+    </section>
+    <section id="styleclarification">
+      <h2>Style Clarification</h2>
+      <h3>Phone Numbers</h3>
+      <p>When referring to phone numbers, use the E.164 format.</p>
+      <h3>Webfingers</h3>
+      <p>When referring to webfingers, use the format <code>[username]@[domain]</code>.</p>
+      <h3>Emails</h3>
+      <p>When referring to emails, use the standard email format <code>[username]@[domain]</code>.</p>
+      <h3>Profiles</h3>
+      <p>We don't define profile information, but it must be an object.</p>
+      <p>Some common profile fields include name (string), bio (string), and avatar (URL). Expand it as you wish.</p>
+    </section>
+  </main>
+  <footer>
+    <p>&copy; 2026 TelWeb. This page is under the MIT License.</p>
+  </footer>
+</body>
