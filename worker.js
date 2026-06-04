@@ -6,7 +6,8 @@ export default {
       const response = await env.ASSETS.fetch(request)
 
       return new Response(response.body, {
-        ...response,
+        status: response.status,
+        statusText: response.statusText,
         headers: {
           ...Object.fromEntries(response.headers),
           'Content-Type': 'application/json',
