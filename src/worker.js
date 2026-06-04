@@ -1,5 +1,6 @@
 export default {
   async fetch(request, env, ctx) {
+    return new Response('Hello, world!')
     const url = new URL(request.url)
 
     if (url.pathname === '/ns') {
