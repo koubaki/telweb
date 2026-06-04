@@ -1,0 +1,22 @@
+{
+  "@context": {
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "TelWeb": "https://telweb.scrollr.net/scheme.json#TelWeb",
+    "phone": {
+      "@id": "https://telweb.scrollr.net/scheme.json#phone",
+      "@type": "xsd:string"
+    },
+    "webfinger": {
+      "@id": "https://telweb.scrollr.net/scheme.json#webfinger",
+      "@type": "xsd:string"
+    },
+    "email": {
+      "@id": "https://telweb.scrollr.net/scheme.json#email",
+      "@type": "xsd:string"
+    },
+    "profile": {
+      "@id": "https://telweb.scrollr.net/scheme.json#profile",
+      "@type": "@json"
+    }
+  }
+}

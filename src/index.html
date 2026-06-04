@@ -16,7 +16,8 @@
         <li><a href="#whynotinsert">Why Not [Insert Name]?</a></li>
         <li><a href="#howto">How to Use</a></li>
         <li><a href="#dns">DNS Fallback</a></li>
-        <li><a href="#styleclarification">Style Clarification</a></li>
+        <li><a href="#style">Style</a></li>
+        <li><a href="#resources">Resources</a></li>
       </ul>
     </nav>
   </header>
@@ -31,7 +32,7 @@
         <li>Made originally for phone numbers, but can be used for any contact information.</li>
         <li>Supports mobile, landline, fax, tor, webfinger, email, and profile information.</li>
         <li>Simple to implement.</li>
-        <li>DNS fallback for phone numbers only (different standard, click <a href="#dns">here for it</a>).</li>
+        <li>DNS fallback for phone numbers only (click <a href="#dns">here for it</a>).</li>
         <li>Open source and free to use.</li>
         <li>You don't have to remember phone numbers or other weird formats anymore.</li>
       </ul>
@@ -46,17 +47,17 @@
     <section id="howto">
       <h2>How To</h2>
       <h3>For Clients</h3>
-      <p>To resolve a domain name, simply send a request to <code>https://[domain]/.well-known/telweb</code>. The response will be a JSON-LD object of <a href="ns">this type</a> containing the resolved information.</p>
+      <p>To resolve a domain name, simply send a request to <code>https://[domain]/.well-known/telweb</code>. The response will be a JSON-LD object of <a href="scheme.json">this type</a> containing the resolved information.</p>
       <h3>For Servers</h3>
-      <p>To implement a TelWeb server, create an endpoint at <code>/.well-known/telweb</code> that returns a JSON-LD object of <a href="ns">this type</a> containing the relevant information for the domain.</p>
-      <p>Make sure to implement a good interface for the user to set their contact information.</p>
+      <p>To implement TelWeb, create an endpoint at <code>/.well-known/telweb</code> that returns a JSON-LD object of <a href="scheme.json">this type</a> containing the relevant information for the user.</p>
+      <p>Make sure to implement a good interface for the user to set their contact information, and let them add custom fields in their <code>profile</code>.</p>
     </section>
     <section id="dns">
       <h2>DNS Fallback</h2>
       <p>For phone numbers only, if the TelWeb endpoint is not available, clients can fallback to DNS by querying for a TXT record at <code>_telweb.[domain]</code>. The response should be in the format <code>tel:[number]</code>.</p>
     </section>
-    <section id="styleclarification">
-      <h2>Style Clarification</h2>
+    <section id="style">
+      <h2>Style</h2>
       <h3>Phone Numbers</h3>
       <p>When referring to phone numbers, use the E.164 format.</p>
       <h3>Webfingers</h3>
@@ -67,8 +68,17 @@
       <p>We don't define profile information, but it must be an object.</p>
       <p>Some common profile fields include name (string), bio (string), and avatar (URL). Expand it as you wish.</p>
     </section>
+    <section id="resources">
+      <h2>Resources</h2>
+      <ul>
+        <li><a href="scheme.json">JSON-LD Scheme</a></li>
+        <li><a href="example.json">Example User</a></li>
+        <li><a href="dns.txt">Example DNS TXT Record</a></li>
+        <li><a href="code.js">Example Client Code (Node.js)</a></li>
+      </ul>
+    </section>
   </main>
   <footer>
-    <p>&copy; 2026 TelWeb. This page is under the MIT License.</p>
+    <p>&copy; 2026 TelWeb. <a href="https://github.com/koubaki/telweb">This page</a> is under the MIT License.</p>
   </footer>
 </body>

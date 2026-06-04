@@ -1,0 +1,1 @@
+_telweb.example.com.   3600   IN   TXT   "tel:+15550100"
