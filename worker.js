@@ -9,7 +9,7 @@ export default {
         ...response,
         headers: {
           ...Object.fromEntries(response.headers),
-          'Content-Type': 'application/ld+json',
+          'Content-Type': 'application/json',
         },
       })
     }
