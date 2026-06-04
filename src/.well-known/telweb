@@ -2,7 +2,7 @@
   "@context": "https://telweb.scrollr.net/scheme.json#TelWeb",
   "phone": "+1234567890",
   "webfinger": "@example@mastodon.social",
-  "email": "example@example.com",
+  "email": "info@example.com",
   "profile": {
     "name": "John Doe",
     "age": 30,
