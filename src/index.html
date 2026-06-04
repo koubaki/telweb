@@ -18,6 +18,7 @@
         <li><a href="#dns">DNS Fallback</a></li>
         <li><a href="#style">Style</a></li>
         <li><a href="#resources">Resources</a></li>
+        <li><a href="#dialer">Dialer</a></li>
       </ul>
     </nav>
   </header>
@@ -76,6 +77,137 @@
         <li><a href="dns.txt">Example DNS TXT Record</a></li>
         <li><a href="code.js">Example Client Code (Node.js)</a></li>
       </ul>
+    </section>
+    <section id="dialer">
+      <h2>Dialer</h2>
+      <input type="text" id="domain" placeholder="example.com" value="">
+      <button onclick="resolveAndDial()">Resolve Domain</button>
+      <div id="result" class="result" style="display: none"></div>
+      <script>
+        async function resolveAndDial() {
+          const input = document.getElementById('domain').value.trim().toLowerCase()
+          if (!input) return alert("Enter a domain")
+
+          const resultDiv = document.getElementById('result')
+          resultDiv.style.display = 'block'
+          resultDiv.innerHTML = `<p>Resolving ${input} via TelWeb...</p>`
+
+          let phone = null
+          let webfinger = null
+          let email = null
+          let profile = null
+          let jsonData = null
+
+          try {
+            const resp = await fetch(`https://${input}/.well-known/telweb`)
+
+            if (resp.ok) {
+              jsonData = await resp.json()
+              phone = jsonData.phone
+              webfinger = jsonData.webfinger
+              email = jsonData.email
+              profile = jsonData.profile
+            }
+          } catch (e) { }
+
+          if (!phone) {
+            try {
+              const dnsResp = await fetch(`https://cloudflare-dns.com/dns-query?name=_telweb.${input}&type=TXT`, {
+                headers: { 'Accept': 'application/dns-json' }
+              })
+
+              const dnsData = await dnsResp.json()
+              if (dnsData.Answer?.[0]) {
+                const txt = dnsData.Answer[0].data.replace(/"/g, '')
+                if (txt.startsWith('tel:')) phone = txt.replace('tel:', '')
+              }
+            } catch (e) { }
+          }
+
+          let html = `<h2>Results for <strong>${input}</strong></h2>`
+
+          if (phone) {
+            const cleanPhone = phone.replace(/\s+/g, '').replace(/[^+0-9]/g, '')
+            html += `
+                <div class="contact-item">
+                  <strong>📞 Phone:</strong> ${cleanPhone}<br>
+                  <a href="tel:${cleanPhone}" class="action-btn">Dial Now</a>
+                </div>`
+          }
+
+          if (webfinger) {
+            html += `
+                <div class="contact-item">
+                  <strong>🔗 WebFinger:</strong> ${webfinger}<br>
+                  <button onclick="performWebFinger('${webfinger}')" class="action-btn">Lookup WebFinger</button>
+                </div>`
+          }
+
+          if (email) {
+            html += `
+                <div class="contact-item">
+                  <strong>✉️ Email:</strong> ${email}<br>
+                  <a href="mailto:${email}" class="action-btn">Send Email</a>
+                </div>`
+          }
+
+          if (profile) {
+            html += `<div class="contact-item"><strong>👤 Profile:</strong><pre>${JSON.stringify(profile, null, 2)}</pre></div>`
+          }
+
+          if (!phone && !webfinger && !email && !profile) {
+            html += `<p style="color: #d32f2f">No TelWeb information found for this domain.</p>`
+          }
+
+          if (jsonData) {
+            html += `<details style="margin-top:20px"><summary>Raw TelWeb JSON</summary><pre>${JSON.stringify(jsonData, null, 2)}</pre></details>`
+          }
+
+          resultDiv.innerHTML = html
+        }
+
+        async function performWebFinger(handle) {
+          let clean = handle.trim()
+
+          if (clean.startsWith('@')) clean = clean.substring(1)
+
+          const parts = clean.split('@')
+          if (parts.length !== 2) {
+            alert("Invalid WebFinger format. Expected: @name@domain")
+            return
+          }
+
+          const username = parts[0]
+          const host = parts[1]
+
+          const resource = `acct:${username}@${host}`
+
+          const url = `https://${host}/.well-known/webfinger?resource=${encodeURIComponent(resource)}`
+
+          const resultDiv = document.getElementById('result')
+          const original = resultDiv.innerHTML
+
+          resultDiv.innerHTML += `<p><em>Querying WebFinger on <strong>${host}</strong> → ${resource}</em></p>`
+
+          try {
+            const resp = await fetch(url)
+
+            if (resp.ok) {
+              const data = await resp.json()
+
+              resultDiv.innerHTML = original + `<h3>✅ WebFinger Response from ${host}</h3><pre>${JSON.stringify(data, null, 2)}</pre>`
+            } else {
+              resultDiv.innerHTML = original + `<p style="color:red">WebFinger returned ${resp.status} on ${host}</p>`
+            }
+          } catch (e) {
+            resultDiv.innerHTML = original + `<p style="color:red">Could not reach ${host} (CORS or network error).</p>`
+          }
+        }
+
+        document.getElementById('domain').addEventListener('keypress', e => {
+          if (e.key === 'Enter') resolveAndDial()
+        })
+      </script>
     </section>
   </main>
   <footer>
