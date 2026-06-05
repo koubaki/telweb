@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TelWeb</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="favicon.png">
 </head>
+
 <body>
   <header>
+    <img href="favicon.png" width="50" height="50">
     <h1>TelWeb</h1>
     <nav>
       <ul>
@@ -25,7 +29,8 @@
   <main>
     <section id="whatisit">
       <h2>What is TelWeb?</h2>
-      <p>TelWeb resolves domain names into telephone numbers, webfingers (Fediverse), emails, and profile information.</p>
+      <p>TelWeb resolves domain names into telephone numbers, webfingers (Fediverse), emails, and profile information.
+      </p>
     </section>
     <section id="features">
       <h2>Features</h2>
@@ -43,26 +48,33 @@
       <h3>Why Not DNS?</h3>
       <p>It has limitations in length.</p>
       <h3>Why Not DID?</h3>
-      <p>DID (including centralized ones like PLC) is cryptographic (you can lose your keys and identity) and is append-only. It's not suitable for private-ish information like phone numbers.</p>
+      <p>DID (including centralized ones like PLC) is cryptographic (you can lose your keys and identity) and is
+        append-only. It's not suitable for private-ish information like phone numbers.</p>
     </section>
     <section id="howto">
       <h2>How To</h2>
       <h3>For Clients</h3>
-      <p>To resolve a domain name, simply send a request to <code>https://[domain]/.well-known/telweb</code>. The response will be a JSON-LD object of <a href="scheme.json">this type</a> containing the resolved information.</p>
+      <p>To resolve a domain name, simply send a request to <code>https://[domain]/.well-known/telweb</code>. The
+        response will be a JSON-LD object of <a href="scheme.json">this type</a> containing the resolved information.
+      </p>
       <h3>For Servers</h3>
-      <p>To implement TelWeb, create an endpoint at <code>/.well-known/telweb</code> that returns a JSON-LD object of <a href="scheme.json">this type</a> containing the relevant information for the user.</p>
-      <p>Make sure to implement a good interface for the user to set their contact information, and let them add custom fields in their <code>profile</code>.</p>
+      <p>To implement TelWeb, create an endpoint at <code>/.well-known/telweb</code> that returns a JSON-LD object of <a
+          href="scheme.json">this type</a> containing the relevant information for the user.</p>
+      <p>Make sure to implement a good interface for the user to set their contact information, and let them add custom
+        fields in their <code>profile</code>.</p>
     </section>
     <section id="dns">
       <h2>DNS Fallback</h2>
-      <p>For phone numbers only, if the TelWeb endpoint is not available, clients can fallback to DNS by querying for a TXT record at <code>_telweb.[domain]</code>. The response should be in the format <code>tel:[number]</code>.</p>
+      <p>For phone numbers only, if the TelWeb endpoint is not available, clients can fallback to DNS by querying for a
+        TXT record at <code>_telweb.[domain]</code>. The response should be in the format <code>tel:[number]</code>.</p>
     </section>
     <section id="style">
       <h2>Style</h2>
       <h3>Phone Numbers</h3>
       <p>When referring to phone numbers, use the E.164 format.</p>
       <h3>Webfingers</h3>
-      <p>When referring to webfingers, use the format <code>@[username]@[domain]</code>.</p>
+      <p>When referring to webfingers, use either the standard email format, <code>@[username]@[domain]</code>, or
+        <code>acct:[username]@[domain]</code>.</p>
       <h3>Emails</h3>
       <p>When referring to emails, use the standard email format <code>[username]@[domain]</code>.</p>
       <h3>Profiles</h3>
@@ -86,9 +98,11 @@
       <script>
         async function resolveAndDial() {
           const input = document.getElementById('domain').value.trim().toLowerCase()
+
           if (!input) return alert("Enter a domain")
 
           const resultDiv = document.getElementById('result')
+
           resultDiv.style.display = 'block'
           resultDiv.innerHTML = `<p>Resolving ${input} via TelWeb...</p>`
 
@@ -103,6 +117,7 @@
 
             if (resp.ok) {
               jsonData = await resp.json()
+
               phone = jsonData.phone
               webfinger = jsonData.webfinger
               email = jsonData.email
@@ -117,8 +132,10 @@
               })
 
               const dnsData = await dnsResp.json()
+
               if (dnsData.Answer?.[0]) {
                 const txt = dnsData.Answer[0].data.replace(/"/g, '')
+
                 if (txt.startsWith('tel:')) phone = txt.replace('tel:', '')
               }
             } catch (e) { }
@@ -128,27 +145,44 @@
 
           if (phone) {
             const cleanPhone = phone.replace(/\s+/g, '').replace(/[^+0-9]/g, '')
-            html += `
-                <div class="contact-item">
-                  <strong>📞 Phone:</strong> ${cleanPhone}<br>
-                  <a href="tel:${cleanPhone}" class="action-btn">Dial Now</a>
-                </div>`
+            html += `<div class="contact-item"><strong>📞 Phone:</strong> ${cleanPhone}<br><a href="tel:${cleanPhone}" class="action-btn">Dial Now</a></div>`
           }
 
           if (webfinger) {
-            html += `
-                <div class="contact-item">
-                  <strong>🔗 WebFinger:</strong> ${webfinger}<br>
-                  <button onclick="performWebFinger('${webfinger}')" class="action-btn">Lookup WebFinger</button>
-                </div>`
+            let clean = webfinger.trim()
+
+            if (clean.startsWith('@')) clean = clean.substring(1)
+            if (clean.startsWith('acct:')) clean = clean.substring(5)
+
+            const parts = clean.split('@')
+
+            html += `<div class="contact-item"><strong>🔗 WebFinger:</strong> ${webfinger}</div>`
+
+            if (parts.length !== 2) {
+              html += `<p style="color:red">Invalid WebFinger format.</p>`
+            } else {
+              const username = parts[0]
+              const host = parts[1]
+
+              const url = `https://${host}/.well-known/webfinger?resource=${encodeURIComponent(`acct:${parts[0]}@${parts[1]}`)}`
+
+              try {
+                const resp = await fetch(url)
+
+                if (resp.ok) {
+                  const data = await resp.json()
+                  html += `<h3>✅ WebFinger Response from ${host}</h3><pre>${JSON.stringify(data, null, 2)}</pre>`
+                } else {
+                  html += `<p style="color:red">WebFinger returned ${resp.status} on ${host}</p>`
+                }
+              } catch (e) {
+                html += `<p style="color:red">Could not reach ${host} (CORS or network error).</p>`
+              }
+            }
           }
 
           if (email) {
-            html += `
-                <div class="contact-item">
-                  <strong>✉️ Email:</strong> ${email}<br>
-                  <a href="mailto:${email}" class="action-btn">Send Email</a>
-                </div>`
+            html += `<div class="contact-item"><strong>✉️ Email:</strong> ${email}<br><a href="mailto:${email}" class="action-btn">Send Email</a></div>`
           }
 
           if (profile) {
@@ -164,44 +198,6 @@
           }
 
           resultDiv.innerHTML = html
-        }
-
-        async function performWebFinger(handle) {
-          let clean = handle.trim()
-
-          if (clean.startsWith('@')) clean = clean.substring(1)
-
-          const parts = clean.split('@')
-          if (parts.length !== 2) {
-            alert("Invalid WebFinger format. Expected: @name@domain")
-            return
-          }
-
-          const username = parts[0]
-          const host = parts[1]
-
-          const resource = `acct:${username}@${host}`
-
-          const url = `https://${host}/.well-known/webfinger?resource=${encodeURIComponent(resource)}`
-
-          const resultDiv = document.getElementById('result')
-          const original = resultDiv.innerHTML
-
-          resultDiv.innerHTML += `<p><em>Querying WebFinger on <strong>${host}</strong> → ${resource}</em></p>`
-
-          try {
-            const resp = await fetch(url)
-
-            if (resp.ok) {
-              const data = await resp.json()
-
-              resultDiv.innerHTML = original + `<h3>✅ WebFinger Response from ${host}</h3><pre>${JSON.stringify(data, null, 2)}</pre>`
-            } else {
-              resultDiv.innerHTML = original + `<p style="color:red">WebFinger returned ${resp.status} on ${host}</p>`
-            }
-          } catch (e) {
-            resultDiv.innerHTML = original + `<p style="color:red">Could not reach ${host} (CORS or network error).</p>`
-          }
         }
 
         document.getElementById('domain').addEventListener('keypress', e => {
