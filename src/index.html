@@ -4,7 +4,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TelWeb</title>
+  <title>TelWeb: Resolve Domain Names to Phone Numbers, Emails, Webfingers & Profiles</title>
+  <meta name="description"
+    content="TelWeb is a simple, open-source protocol that turns any domain into contact information. Resolve domains to phone numbers, emails, Webfingers (Fediverse), and profiles via /.well-known/telweb.">
+  <link rel="canonical" href="https://telweb.scrollr.net/">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="TelWeb: Resolve Domain Names to Phone Numbers, Emails, Webfingers & Profiles">
+  <meta property="og:description"
+    content="TelWeb resolves domain names into telephone numbers, webfingers, emails, and profile information.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://telweb.scrollr.net/">
+  <meta property="og:image" content="https://telweb.scrollr.net/favicon.png">
+  <meta property="og:site_name" content="TelWeb">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="TelWeb - Resolve Domain Names to Phone Numbers, Emails, Webfingers & Profiles">
+  <meta name="twitter:description"
+    content="TelWeb resolves domain names into telephone numbers, webfingers, emails, and profile information.">
+  <meta name="twitter:image" content="https://telweb.scrollr.net/favicon.png">
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" href="favicon.png">
 </head>
@@ -31,6 +47,16 @@
       <h2>What is TelWeb?</h2>
       <p>TelWeb resolves domain names into telephone numbers, webfingers (Fediverse), emails, and profile information.
       </p>
+      <h3>FAQ</h3>
+      <h4>How will it improve my life?</h4>
+      <p>If we suceed, you won't have to remember phone numbers, Fediverse identifiers, email addresses, or profile
+        information into contact books anymore; just a domain name.</p>
+      <h4>Why the DNS fallback?</h4>
+      <p>If someone doesn't want to host a website, they can just buy a domain and put their phone number.</p>
+      <h4>Why webfinger?</h4>
+      <p>While the Fediverse is a tiny minority of the Web, it still has some pretty long identifiers.</p>
+      <h4>Can I expand it?</h4>
+      <p>Yes! Use the profile fields as you want! Just make sure to keep some kind of standard so that more applications can recognize it.</p>
     </section>
     <section id="features">
       <h2>Features</h2>
@@ -71,12 +97,13 @@
     <section id="style">
       <h2>Style</h2>
       <h3>Phone Numbers</h3>
-      <p>When referring to phone numbers, use the E.164 format.</p>
+      <p>Use the E.164 format.</p>
       <h3>Webfingers</h3>
-      <p>When referring to webfingers, use either the standard email format, <code>@[username]@[domain]</code>, or
-        <code>acct:[username]@[domain]</code>.</p>
+      <p>Use either the standard email format, <code>@[username]@[domain]</code>, or
+        <code>acct:[username]@[domain]</code>.
+      </p>
       <h3>Emails</h3>
-      <p>When referring to emails, use the standard email format <code>[username]@[domain]</code>.</p>
+      <p>Use the standard email format <code>[username]@[domain]</code>.</p>
       <h3>Profiles</h3>
       <p>We don't define profile information, but it must be an object.</p>
       <p>Some common profile fields include name (string), bio (string), and avatar (URL). Expand it as you wish.</p>
