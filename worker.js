@@ -13,19 +13,13 @@ export default {
     }
 
     const response = await env.ASSETS.fetch(request)
-    
-    if (response.ok) {
-      const bodyText = await response.text()
 
-      const newResponse = new Response(bodyText, response)
-      newResponse.headers.set('Access-Control-Allow-Origin', '*')
-      newResponse.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+    const newResponse = new Response(response.body, response)
 
-      newResponse.headers.delete('Content-Encoding')
+    newResponse.headers.set('Access-Control-Allow-Origin', '*')
+    newResponse.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+    newResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
 
-      return newResponse
-    }
-
-    return response
+    return newResponse
   }
 }
