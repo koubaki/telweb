@@ -19,6 +19,7 @@ export default {
     newResponse.headers.set('Access-Control-Allow-Origin', '*')
     newResponse.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
     newResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+    newResponse.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
 
     return newResponse
   }
