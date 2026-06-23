@@ -1,7 +1,5 @@
 export default {
   async fetch(request, env, ctx) {
-    const url = new URL(request.url)
-
     if (request.method === 'OPTIONS') {
       return new Response(null, {
         status: 204,
@@ -15,13 +13,19 @@ export default {
     }
 
     const response = await env.ASSETS.fetch(request)
+    
+    if (response.ok) {
+      const bodyText = await response.text()
 
-    const newResponse = new Response(response.body, response)
+      const newResponse = new Response(bodyText, response)
+      newResponse.headers.set('Access-Control-Allow-Origin', '*')
+      newResponse.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
 
-    newResponse.headers.set('Access-Control-Allow-Origin', '*')
-    newResponse.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-    newResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+      newResponse.headers.delete('Content-Encoding')
 
-    return newResponse
+      return newResponse
+    }
+
+    return response
   }
 }
