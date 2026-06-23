@@ -1,5 +1,5 @@
 {
-  "@context": "https://telweb.scrollr.net/scheme.json#TelWeb",
+  "@context": "https://telweb.scrollr.net/scheme.json",
   "phone": "+1234567890",
   "webfinger": "acct:john@example.com",
   "email": "info@example.com",
